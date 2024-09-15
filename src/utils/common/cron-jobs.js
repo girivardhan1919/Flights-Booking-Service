@@ -8,3 +8,5 @@ function scheduleCrons() {
 }
 
 module.exports = scheduleCrons;
+
+//To set cron for 5sec -> '*/5 * * * * *'
