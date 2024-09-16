@@ -4,5 +4,6 @@ dotenv.config();
 
 module.exports = {
     PORT: process.env.PORT,
-    FLIGHT_SERVICE_BASE_URL: process.env.FLIGHT_SERVICE_BASE_URL
+    FLIGHT_SERVICE_BASE_URL: process.env.FLIGHT_SERVICE_BASE_URL,
+    NOTIFY_QUEUE: process.env.NOTIFY_QUEUE
 }

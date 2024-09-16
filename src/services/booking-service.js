@@ -2,7 +2,7 @@ const axios = require('axios');
 const { StatusCodes } = require('http-status-codes');
 
 const { BookingRepository } = require('../repositories');
-const { ServerConfig } = require('../config')
+const { ServerConfig, Queue } = require('../config')
 const db = require('../models');
 const AppError = require('../utils/errors/app-error');
 const { Enums } = require('../utils/common');
@@ -11,6 +11,7 @@ const { BOOKED, CANCELLED } = Enums.BOOKING_STATUS;
 const bookingRepository = new BookingRepository();
 
 async function createBooking(data) {
+  console.log(data);
   const transaction = await db.sequelize.transaction();
   try {
     const flight = await axios.get(`${ServerConfig.FLIGHT_SERVICE_BASE_URL}/api/v1/flights/${data.flightId}`);
@@ -58,7 +59,14 @@ async function makePayment(data) {
     }
     // we assume here that payment is successful
     await bookingRepository.update(data.bookingId, { status: BOOKED }, transaction);
+
+    Queue.sendData({
+      recipientEmail: 'daggupati.girivardhan@gmail.com',
+      subject: 'Flight Booked',
+      text: `Booking successfully done for the booking ${data.bookingId}`
+    });
     await transaction.commit();
+
   } catch (error) {
     await transaction.rollback();
     throw error;
